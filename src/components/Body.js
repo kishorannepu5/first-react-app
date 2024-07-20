@@ -1,12 +1,11 @@
 import RestaurantCard from "./RestaurantCard";
-import resList  from "../utils/mockData"
 import { useEffect, useState } from "react";
-
+import { Link } from 'react-router-dom'
 
   
   const Body = () => {
-    const [localResList,setLocalResList] = useState(resList);
-    const [filterResList, setFilterResList] = useState(resList);
+    const [localResList,setLocalResList] = useState([]);
+    const [filterResList, setFilterResList] = useState([]);
     const [searchText, setSearchText] = useState("");
 
     useEffect(() => {
@@ -14,17 +13,17 @@ import { useEffect, useState } from "react";
     },[]);
 
     const fetchRestaurents = async()=>{
-        const restaurants = await fetch('https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9352403&lng=77.624532&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING')
+        const restaurants = await fetch('https://corsproxy.io/?https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.9352403&lng=77.624532&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING')
         const json = await restaurants.json();
-        console.log(json)
+        setLocalResList(json.data.cards[4].card.card.gridElements.infoWithStyle.restaurants)
+        setFilterResList(json.data.cards[4].card.card.gridElements.infoWithStyle.restaurants)
     }
     return (
       <div className="body">
         <div className="filter">
             <button className="filter-btn" onClick={ ()=>{
-                const filterList = localResList.filter(rest => rest.data.avgRating > 4)
-                console.log(filterList[0])
-                setLocalResList(filterList)
+                const filterList = localResList.filter(value => value.info.avgRating === 4.5)
+                setFilterResList(filterList)
             } }>Top Rated Restaurants</button>
 
             <input type="text" value={searchText} onChange={
@@ -33,13 +32,15 @@ import { useEffect, useState } from "react";
                 }
             }/>
             <button onClick={()=> {
-                const serachResult = localResList.filter(value => value.data.name.toLowerCase().includes(searchText.toLowerCase()))
+                const serachResult = localResList.filter(value => value?.info?.name.toLowerCase().includes(searchText.toLowerCase()))
                 setFilterResList(serachResult)
             }}>Search</button>
         </div>
         <div className="res-container">
           {filterResList.map((restaurant) => (
-            <RestaurantCard key={restaurant.data.id} resData={restaurant} />
+           <Link key={restaurant?.info?.id} to={'/restaurant/'+restaurant?.info?.id}>
+            <RestaurantCard resData={restaurant} />
+           </Link> 
           ))}
         </div>
       </div>

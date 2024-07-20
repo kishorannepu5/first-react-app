@@ -5,7 +5,7 @@
 }
 
 .logo {
-  width: 200px;
+  width: 100px;
 }
 
 .nav-items {
@@ -45,5 +45,17 @@
 
 .res-logo {
   width: 100%;
+}
+
+.shimmer-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.shimmer-card {
+  margin: 20px;
+  width: 200px;
+  height: 400px;
+  background-color: #f0f0f0
 }
 
